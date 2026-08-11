@@ -51,6 +51,27 @@ final class TextRoleRuleTest extends TestCase
             'con`tent',
             'con\`tent',
         ];
+
+        yield 'role with escaped backslash' => [
+            ':role:`a\\\\b`',
+            'role',
+            'a\\b',
+            'a\\\\b',
+        ];
+
+        yield 'role with escaped backtick at end' => [
+            ':role:`text\``',
+            'role',
+            'text`',
+            'text\`',
+        ];
+
+        yield 'role with only escaped backtick' => [
+            ':role:`\``',
+            'role',
+            '`',
+            '\`',
+        ];
     }
 
     #[DataProvider('roleFormatProvider')]
@@ -126,5 +147,32 @@ final class TextRoleRuleTest extends TestCase
          * @phpstan-ignore-next-line
          */
         self::assertSame($expectedRawContent, $node->rawContent);
+    }
+
+    public function testApplyReturnsNullOnTrailingBackslashWithoutRaisingWarning(): void
+    {
+        $input = ':role:`text\\';
+
+        $textRoleFactory = $this->createMock(TextRoleFactory::class);
+        $textRoleFactory->expects(self::never())->method('getTextRole');
+
+        $lexer = new InlineLexer();
+        $lexer->setInput($input);
+        $lexer->moveNext();
+        $lexer->moveNext();
+
+        $textRoleRule = new TextRoleRule();
+        self::assertTrue($textRoleRule->applies($lexer));
+
+        $documentParserContext = new DocumentParserContext(
+            self::createStub(ParserContext::class),
+            $textRoleFactory,
+            self::createStub(MarkupLanguageParser::class),
+        );
+
+        self::assertNull($textRoleRule->apply(
+            new BlockContext($documentParserContext, ''),
+            $lexer,
+        ));
     }
 }

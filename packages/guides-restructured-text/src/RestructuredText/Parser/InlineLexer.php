@@ -34,6 +34,10 @@ use const PHP_VERSION_ID;
 /** @extends AbstractLexer<int, string> */
 final class InlineLexer extends AbstractLexer
 {
+    public function __construct(private readonly bool $disableLegacyTilde = false)
+    {
+    }
+
     public const WORD = 1;
     public const UNDERSCORE = 2;
     public const ANONYMOUS_END = 3;
@@ -53,7 +57,7 @@ final class InlineLexer extends AbstractLexer
     public const STRONG_DELIMITER = 22;
     public const NBSP = 23;
     public const VARIABLE_DELIMITER = 24;
-    public const ESCAPED_SIGN = 25;
+    public const BACKSLASH = 25;
 
     /**
      * Map between string position and position in token list.
@@ -68,8 +72,7 @@ final class InlineLexer extends AbstractLexer
     protected function getCatchablePatterns(): array
     {
         return [
-            '\\\\``', // must be a separate case, as the next pattern would split in "\`" + "`", causing it to become a intepreted text
-            '\\\\[\s\S]', // Escaping hell... needs escaped slash in regex, but also in php.
+            '\\\\', // Escaping hell... needs escaped slash in regex, but also in php.
             '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}',
             '(?<=^|\s)[a-z0-9-]+_{2}', //Inline href.
             '(?<=^|\s)[a-z0-9-]+_{1}(?=[\s\.+]|$)', //Inline href.
@@ -132,8 +135,8 @@ final class InlineLexer extends AbstractLexer
             '#' => self::OCTOTHORPE,
             '[' => self::ANNOTATION_START,
             ']' => self::ANNOTATION_END,
-            '~' => self::NBSP,
-            '\\``' => self::ESCAPED_SIGN,
+            '~' => $this->disableLegacyTilde ? null : self::NBSP,
+            '\\' => self::BACKSLASH,
             default => null,
         };
 
@@ -148,10 +151,6 @@ final class InlineLexer extends AbstractLexer
 
         if (str_ends_with($value, '_') && ctype_alnum(str_replace('-', '', substr($value, 0, -1)))) {
             return self::NAMED_REFERENCE;
-        }
-
-        if (strlen($value) === 2 && $value[0] === '\\') {
-            return self::ESCAPED_SIGN;
         }
 
         if (strlen($value) === 1 && ctype_space($value)) {

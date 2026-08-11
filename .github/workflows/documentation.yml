@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: "actions/checkout@v6"
+        uses: "actions/checkout@v7"
 
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
@@ -37,7 +37,7 @@ jobs:
           echo "COMPOSER_ROOT_VERSION=1.x-dev" >> $GITHUB_ENV
 
       - name: "Install dependencies with Composer"
-        uses: "ramsey/composer-install@v3"
+        uses: "ramsey/composer-install@v4"
         with:
           dependency-versions: "highest"
 
@@ -50,13 +50,13 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v6"
+        uses: "actions/checkout@v7"
 
       - name: "Build"
         uses: "phpDocumentor/phpDocumentor@master"
 
       - name: "Upload"
-        uses: "actions/upload-artifact@v6"
+        uses: "actions/upload-artifact@v7"
         with:
           name: "documentation"
           path: "build/docs"
@@ -69,14 +69,14 @@ jobs:
     needs: "build"
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v6"
+        uses: "actions/checkout@v7"
         with:
           repository: "phpDocumentor/docs"
           token: "${{ secrets.BOT_TOKEN }}"
           path: "docs"
 
       - name: "Download"
-        uses: "actions/download-artifact@v7"
+        uses: "actions/download-artifact@v8"
         with:
           name: "documentation"
           path: "build/docs"

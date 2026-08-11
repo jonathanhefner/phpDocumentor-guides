@@ -12,13 +12,13 @@ jobs:
     runs-on: "ubuntu-latest"
     if: "${{ github.event.pull_request.user.login == 'dependabot[bot]' }}"
     steps:
-      - uses: "actions/checkout@v6"
+      - uses: "actions/checkout@v7"
         with:
           fetch-depth: "0"
           persist-credentials: "false"
       - name: "Dependabot metadata"
         id: "dependabot-metadata"
-        uses: "dependabot/fetch-metadata@v2.5.0"
+        uses: "dependabot/fetch-metadata@v3.1.0"
       - name: "Enable auto-merge for Dependabot PRs"
         run: "gh pr merge --auto --merge $PR_URL"
         env:

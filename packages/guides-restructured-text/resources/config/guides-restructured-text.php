@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use phpDocumentor\Guides\Graphs\Directives\UmlDirective;
 use phpDocumentor\Guides\ReferenceResolvers\DocumentNameResolverInterface;
 use phpDocumentor\Guides\RestructuredText\Directives\AdmonitionDirective;
 use phpDocumentor\Guides\RestructuredText\Directives\AttentionDirective;
@@ -49,7 +48,9 @@ use phpDocumentor\Guides\RestructuredText\Directives\SectionauthorDirective;
 use phpDocumentor\Guides\RestructuredText\Directives\SeeAlsoDirective;
 use phpDocumentor\Guides\RestructuredText\Directives\SidebarDirective;
 use phpDocumentor\Guides\RestructuredText\Directives\SubDirective;
+use phpDocumentor\Guides\RestructuredText\Directives\TabDirective;
 use phpDocumentor\Guides\RestructuredText\Directives\TableDirective;
+use phpDocumentor\Guides\RestructuredText\Directives\TabsDirective;
 use phpDocumentor\Guides\RestructuredText\Directives\TestLoggerDirective;
 use phpDocumentor\Guides\RestructuredText\Directives\TipDirective;
 use phpDocumentor\Guides\RestructuredText\Directives\TitleDirective;
@@ -233,12 +234,13 @@ return static function (ContainerConfigurator $container): void {
         ->set(TableDirective::class)
         ->set(TestLoggerDirective::class)
         ->set(TipDirective::class)
+        ->set(TabDirective::class)
+        ->set(TabsDirective::class)
         ->set(TitleDirective::class)
         ->set(ToctreeDirective::class)
         ->bind('$startingRule', service(InlineMarkupRule::class))
         ->set(MenuDirective::class)
         ->set(TodoDirective::class)
-        ->set(UmlDirective::class)
         ->set(VersionAddedDirective::class)
         ->set(VersionChangedDirective::class)
         ->set(WarningDirective::class)
@@ -371,6 +373,7 @@ return static function (ContainerConfigurator $container): void {
         ->set(DocumentRule::class)
         ->set(InlineParser::class)
         ->arg('$inlineRules', tagged_iterator('phpdoc.guides.parser.rst.inline_rule'))
+        ->arg('$disableLegacyTilde', false)
         ->set(GlobSearcher::class)
         ->set(ToctreeBuilder::class)
         ->set(InlineMarkupRule::class)
