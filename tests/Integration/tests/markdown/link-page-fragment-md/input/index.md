@@ -1,5 +1,7 @@
-# Page A
+# MCP Elements
 
-See [Section Two on Page B](page-b.md#section-two).
+See [Manual capability registration](server-builder.md#manual-capability-registration).
 
-See [Page B without fragment](page-b.md).
+See [Explicit element registration](server-builder.md#explicit-element-registration).
+
+See [Server Builder](server-builder.md).
